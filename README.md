@@ -44,3 +44,4 @@ Or visit the [live demo](https://sanderws-boop.github.io/studiopro/).
 
 - [sanderws-boop](https://github.com/sanderws-boop)
 - [@poaster_](https://x.com/poaster_)
+- [Claude Code](https://claude.ai/claude-code) by Anthropic
