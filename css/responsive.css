@@ -1,0 +1,36 @@
+@media (max-width: 1100px) {
+    :root {
+        --panel-left-width: 260px;
+        --panel-right-width: 240px;
+    }
+}
+
+@media (max-width: 900px) {
+    .app-layout {
+        grid-template-columns: var(--panel-left-width) 1fr;
+        grid-template-areas:
+            "toolbar toolbar"
+            "left canvas"
+            "timeline timeline";
+    }
+    .panel-right { display: none; }
+}
+
+@media (max-width: 700px) {
+    .app-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: var(--toolbar-height) 1fr auto var(--timeline-collapsed);
+        grid-template-areas:
+            "toolbar"
+            "canvas"
+            "left"
+            "timeline";
+    }
+    .panel-left {
+        max-height: 40vh;
+        border-right: none;
+        border-top: 1px solid var(--border-subtle);
+    }
+    .panel-right { display: none; }
+    .toolbar-brand { display: none; }
+}

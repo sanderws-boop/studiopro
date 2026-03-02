@@ -1,0 +1,240 @@
+/* Left Panel */
+.panel-left {
+    grid-area: left;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    overflow: hidden;
+    box-shadow: inset -1px 0 0 rgba(255,255,255,0.02);
+}
+
+/* Right Panel */
+.panel-right {
+    grid-area: right;
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    overflow: hidden;
+    box-shadow: inset 1px 0 0 rgba(255,255,255,0.02);
+}
+
+/* Panel sections */
+.panel-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--bg-tertiary);
+    flex-shrink: 0;
+}
+
+.panel-tab {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all var(--dur-fast);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid transparent;
+    text-align: center;
+}
+
+.panel-tab:hover { color: var(--text-secondary); background: var(--bg-hover); }
+.panel-tab.active {
+    color: var(--accent-hover);
+    border-bottom-color: var(--accent);
+    background: var(--bg-secondary);
+}
+
+.panel-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.panel-section {}
+
+.section-title {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-tertiary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.section-title-action {
+    font-size: 10px;
+    background: none;
+    border: none;
+    color: var(--accent);
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+}
+.section-title-action:hover { color: var(--accent-hover); }
+
+/* Pattern grid */
+.pattern-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.pat-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all var(--dur-normal) var(--ease);
+}
+.pat-card:hover { border-color: var(--border-strong); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.pat-card.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 2px 16px var(--accent-glow); }
+.pat-card.active .pat-name { color: var(--accent-hover); }
+
+.pat-preview {
+    width: 100%;
+    height: 48px;
+    display: block;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    background: var(--bg-tertiary);
+    object-fit: cover;
+}
+.pat-name {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: 7px 10px 8px;
+    letter-spacing: 0.2px;
+    transition: color var(--dur-fast);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Pattern search */
+.pattern-search {
+    position: relative;
+    margin-bottom: 10px;
+}
+.pattern-search input {
+    width: 100%;
+    padding: 8px 12px 8px 32px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 12px;
+    font-family: var(--font);
+    transition: border-color var(--dur-fast);
+}
+.pattern-search input:focus { border-color: var(--border-focus); outline: none; }
+.pattern-search input::placeholder { color: var(--text-tertiary); }
+.pattern-search svg {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    color: var(--text-tertiary);
+}
+
+/* Category filter pills */
+.category-pills {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.category-pill {
+    padding: 4px 10px;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 20px;
+    border: 1px solid var(--border-subtle);
+    background: transparent;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    transition: all var(--dur-fast);
+}
+.category-pill:hover { border-color: var(--border-strong); color: var(--text-secondary); }
+.category-pill.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent-hover); }
+
+/* Color pickers */
+.palette-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+.palette-swatch {
+    height: 32px;
+    border-radius: var(--radius-sm);
+    border: 2px solid transparent;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: border-color var(--dur-normal) var(--ease), transform var(--dur-normal) var(--ease);
+}
+.palette-swatch:hover { transform: scale(1.03); border-color: var(--border-strong); }
+.palette-swatch.active { border-color: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
+.palette-name {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    pointer-events: none;
+    letter-spacing: 0.3px;
+}
+
+.custom-colors { display: flex; gap: 6px; margin-top: 8px; }
+.custom-colors .color-input-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.custom-colors label {
+    font-size: 9px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+input[type="color"] {
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    width: 100%;
+    height: 28px;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    padding: 0;
+    background: transparent;
+}
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
+input[type="color"]::-webkit-color-swatch { border: 1px solid var(--border-default); border-radius: 4px; }

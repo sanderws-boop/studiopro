@@ -1,0 +1,275 @@
+/* Timeline panel */
+.timeline-panel {
+    grid-area: timeline;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.timeline-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+    min-height: var(--timeline-collapsed);
+}
+
+.timeline-toggle {
+    width: 20px;
+    height: 20px;
+    border: none;
+    background: transparent;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-xs);
+    transition: all var(--dur-fast);
+}
+.timeline-toggle:hover { color: var(--text-secondary); background: var(--bg-hover); }
+.timeline-toggle svg { width: 12px; height: 12px; transition: transform var(--dur-normal); }
+.timeline-collapsed .timeline-toggle svg { transform: rotate(180deg); }
+
+.timeline-title {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-tertiary);
+}
+
+.timeline-duration {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.timeline-duration label {
+    font-size: 10px;
+    color: var(--text-tertiary);
+}
+.timeline-duration input {
+    width: 50px;
+    padding: 3px 6px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xs);
+    color: var(--text-primary);
+    font-size: 11px;
+    font-family: var(--font-mono);
+    text-align: center;
+}
+
+/* Timeline body */
+.timeline-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    position: relative;
+}
+
+.timeline-labels {
+    width: 120px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border-subtle);
+    overflow-y: auto;
+    padding-top: 24px;
+}
+
+.timeline-label {
+    height: 28px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    border-bottom: 1px solid var(--border-subtle);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.timeline-label.active { color: var(--accent-hover); }
+
+.timeline-tracks-wrap {
+    flex: 1;
+    position: relative;
+    overflow: auto;
+}
+
+/* Time ruler */
+.timeline-ruler {
+    height: 24px;
+    position: sticky;
+    top: 0;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-default);
+    z-index: 5;
+    cursor: pointer;
+}
+.timeline-ruler canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Tracks area */
+.timeline-tracks {
+    position: relative;
+    min-height: 100%;
+}
+
+.timeline-track {
+    height: 28px;
+    position: relative;
+    border-bottom: 1px solid var(--border-subtle);
+}
+.timeline-track:hover { background: rgba(255,255,255,0.02); }
+
+/* Keyframe diamond */
+.keyframe {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--accent);
+    transform: rotate(45deg) translate(-50%, -50%);
+    top: 50%;
+    cursor: pointer;
+    border: 1px solid var(--accent-hover);
+    transition: all var(--dur-fast);
+    z-index: 3;
+}
+.keyframe:hover {
+    transform: rotate(45deg) translate(-50%, -50%) scale(1.3);
+    box-shadow: 0 0 8px var(--accent-glow);
+}
+.keyframe.selected {
+    background: var(--accent-hover);
+    box-shadow: 0 0 12px var(--accent-strong);
+}
+
+/* Playhead */
+.timeline-playhead {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--error);
+    z-index: 10;
+    pointer-events: none;
+}
+.timeline-playhead::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -4px;
+    width: 10px;
+    height: 10px;
+    background: var(--error);
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+}
+
+/* Keyframe diamond (used by timeline-ui.js) */
+.keyframe-diamond {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--accent);
+    transform: rotate(45deg) translateY(-50%);
+    top: 50%;
+    cursor: pointer;
+    border: 1px solid var(--accent-hover);
+    transition: all var(--dur-fast);
+    z-index: 3;
+}
+.keyframe-diamond:hover {
+    transform: rotate(45deg) translateY(-50%) scale(1.3);
+    box-shadow: 0 0 8px var(--accent-glow);
+}
+
+/* Ruler marks */
+.ruler-mark {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-left: 1px solid var(--border-subtle);
+}
+.ruler-mark.minor { border-left: 1px solid rgba(255,255,255,0.03); }
+.ruler-label {
+    font-size: 9px;
+    color: var(--text-tertiary);
+    padding: 4px;
+    font-family: var(--font-mono);
+}
+
+/* Track labels inside tracks */
+.track-label {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 80px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    font-size: 10px;
+    color: var(--text-tertiary);
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-subtle);
+    z-index: 2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.track-bar {
+    position: absolute;
+    left: 80px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.timeline-track.selected { background: rgba(124,106,239,0.05); }
+.timeline-track.selected .track-label { color: var(--accent-hover); }
+
+.timeline-bar {
+    position: relative;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+/* Timeline controls */
+.timeline-controls {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.timeline-dur-label {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.timeline-dur-input {
+    width: 44px;
+    padding: 3px 4px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xs);
+    color: var(--text-primary);
+    font-size: 11px;
+    font-family: var(--font-mono);
+    text-align: center;
+}
+
+/* Collapsed state */
+.app-layout.timeline-collapsed .timeline-body { display: none; }

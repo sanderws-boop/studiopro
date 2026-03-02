@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Pro — Generative Design Engine</title>
+    <meta name="description" content="Professional generative background engine with layers, timeline animation, audio reactivity, and 26+ patterns">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/toolbar.css">
+    <link rel="stylesheet" href="css/panels.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layers.css">
+    <link rel="stylesheet" href="css/timeline.css">
+    <link rel="stylesheet" href="css/modals.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><path d='M30 70 L50 30 L70 70' fill='none' stroke='white' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+</head>
+<body>
+
+<div class="app-layout">
+
+    <!-- ===== TOOLBAR ===== -->
+    <div class="toolbar">
+        <div class="toolbar-brand">
+            <div class="toolbar-logo">
+                <svg viewBox="0 0 24 24"><path d="M6 18L12 6l6 12"/></svg>
+            </div>
+            <span class="toolbar-title">Studio Pro</span>
+        </div>
+
+        <div class="toolbar-group">
+            <button class="toolbar-btn" id="btn-undo" title="Undo (Ctrl+Z)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            </button>
+            <button class="toolbar-btn" id="btn-redo" title="Redo (Ctrl+Shift+Z)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/></svg>
+            </button>
+        </div>
+
+        <div class="toolbar-separator"></div>
+
+        <button class="toolbar-play" id="btn-play" title="Play/Pause (Space)">
+            <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="white"/></svg>
+        </button>
+
+        <div class="speed-group">
+            <button class="speed-btn" data-speed="0.5">0.5x</button>
+            <button class="speed-btn active" data-speed="1">1x</button>
+            <button class="speed-btn" data-speed="2">2x</button>
+        </div>
+
+        <span class="time-display" id="time-display">00:00.0</span>
+
+        <div class="toolbar-separator"></div>
+
+        <div class="toolbar-group">
+            <button class="toolbar-btn" id="btn-fullscreen" title="Fullscreen (F)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            </button>
+            <button class="toolbar-btn" id="btn-audio" title="Audio Reactivity" onclick="Studio.Events.emit('modal:audio')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+            <button class="toolbar-btn" id="btn-cmd" title="Command Palette (Ctrl+K)" onclick="Studio.Events.emit('commandPalette:toggle')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>
+            </button>
+        </div>
+
+        <div class="toolbar-spacer"></div>
+
+        <button class="toolbar-export-btn" id="btn-export">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Export
+        </button>
+    </div>
+
+    <!-- ===== LEFT PANEL ===== -->
+    <div class="panel-left">
+        <div class="panel-tabs">
+            <button class="panel-tab active" data-tab="patterns">Patterns</button>
+            <button class="panel-tab" data-tab="presets">Presets</button>
+        </div>
+        <div class="tab-content active" data-tab="patterns">
+            <div class="panel-content">
+                <!-- Pattern search -->
+                <div class="panel-section">
+                    <div class="pattern-search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" id="pattern-search-input" placeholder="Search patterns...">
+                    </div>
+                    <div id="pattern-categories" class="category-pills"></div>
+                    <div id="pattern-grid" class="pattern-grid"></div>
+                </div>
+
+                <!-- Palette section -->
+                <div class="panel-section">
+                    <div class="section-title">
+                        <span>Palettes</span>
+                    </div>
+                    <div id="palette-categories" class="category-pills"></div>
+                    <div id="palette-grid" class="palette-grid"></div>
+                    <div id="custom-colors" class="custom-colors">
+                        <div class="color-input-wrap">
+                            <label>Color 1</label>
+                            <input type="color" value="#050508">
+                        </div>
+                        <div class="color-input-wrap">
+                            <label>Color 2</label>
+                            <input type="color" value="#1a2540">
+                        </div>
+                        <div class="color-input-wrap">
+                            <label>Color 3</label>
+                            <input type="color" value="#2e6080">
+                        </div>
+                        <div class="color-input-wrap">
+                            <label>Color 4</label>
+                            <input type="color" value="#60a0c0">
+                        </div>
+                        <div class="color-input-wrap">
+                            <label>Color 5</label>
+                            <input type="color" value="#a0d0e0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content" data-tab="presets">
+            <div class="panel-content">
+                <div class="panel-section">
+                    <div class="section-title"><span>Preset Library</span></div>
+                    <div id="preset-categories" class="category-pills"></div>
+                    <div id="preset-grid" class="preset-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CANVAS ===== -->
+    <div class="canvas-area">
+        <canvas id="glcanvas"></canvas>
+        <div class="canvas-overlay">
+            <button class="toolbar-btn" onclick="Studio.Events.emit('toolbar:fullscreen')" title="Fullscreen">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== RIGHT PANEL ===== -->
+    <div class="panel-right">
+        <div class="panel-tabs">
+            <button class="panel-tab active" data-tab="layers">Layers</button>
+            <button class="panel-tab" data-tab="properties">Properties</button>
+        </div>
+        <div class="tab-content active" data-tab="layers">
+            <div class="panel-content">
+                <div class="panel-section">
+                    <div class="section-title">
+                        <span>Layers</span>
+                        <button class="section-title-action" id="btn-add-layer">+ Add Layer</button>
+                    </div>
+                    <div id="layer-list" class="layer-list"></div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content" data-tab="properties">
+            <div class="panel-content" id="properties-content">
+                <!-- Properties panel renders here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TIMELINE ===== -->
+    <div class="timeline-panel">
+        <div class="timeline-header">
+            <button class="toolbar-btn" id="btn-timeline-toggle" title="Toggle Timeline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <span class="timeline-title">Timeline</span>
+            <div class="timeline-controls">
+                <label class="timeline-dur-label">Duration:
+                    <input type="number" id="timeline-duration" min="1" max="60" step="1" value="10" class="timeline-dur-input"> s
+                </label>
+                <button class="btn btn-sm" id="btn-add-keyframe" title="Add Keyframe">+ Key</button>
+            </div>
+        </div>
+        <div class="timeline-body">
+            <div id="timeline-ruler" class="timeline-ruler"></div>
+            <div id="timeline-bar" class="timeline-bar">
+                <div id="timeline-playhead" class="timeline-playhead"></div>
+                <div id="timeline-tracks" class="timeline-tracks"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===== COMMAND PALETTE ===== -->
+<div class="cmd-palette-overlay" id="command-palette">
+    <div class="cmd-palette">
+        <input type="text" class="cmd-input" placeholder="Type a command, pattern, or preset...">
+        <div class="cmd-list"></div>
+    </div>
+</div>
+
+<!-- ===== EXPORT MODAL ===== -->
+<div class="modal-overlay" id="export-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title">Export</h2>
+            <button class="modal-close" onclick="Studio.UI.Modals.closeAll()">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="export-tabs">
+            <button class="export-tab active">PNG</button>
+            <button class="export-tab">WebM</button>
+            <button class="export-tab">GIF</button>
+            <button class="export-tab">CSS</button>
+        </div>
+        <div class="modal-body">
+            <!-- PNG Panel -->
+            <div class="export-panel active">
+                <div class="param-row">
+                    <label class="param-label">Resolution</label>
+                    <select id="png-resolution" class="select-input">
+                        <option value="1">1920 × 1080 (Full HD)</option>
+                        <option value="2" selected>3840 × 2160 (4K)</option>
+                        <option value="3">7680 × 4320 (8K)</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-block" id="btn-export-png">Export PNG</button>
+            </div>
+            <!-- WebM Panel -->
+            <div class="export-panel">
+                <div class="param-row">
+                    <label class="param-label">Duration (seconds)</label>
+                    <input type="number" id="webm-duration" class="param-value" value="5" min="1" max="60">
+                </div>
+                <div class="param-row">
+                    <label class="param-label">FPS</label>
+                    <select id="webm-fps" class="select-input">
+                        <option value="24">24 fps</option>
+                        <option value="30" selected>30 fps</option>
+                        <option value="60">60 fps</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-block" id="btn-export-webm">Record WebM</button>
+            </div>
+            <!-- GIF Panel -->
+            <div class="export-panel">
+                <div class="param-row">
+                    <label class="param-label">Resolution</label>
+                    <select id="gif-size" class="select-input">
+                        <option value="480">480p</option>
+                        <option value="640">640p</option>
+                        <option value="1280" selected>1280p (HD)</option>
+                        <option value="1920">1920p (Full HD)</option>
+                    </select>
+                </div>
+                <div class="param-row">
+                    <label class="param-label">Duration (seconds)</label>
+                    <input type="number" id="gif-duration" class="param-value" value="3" min="1" max="30">
+                </div>
+                <div id="gif-size-estimate" style="color: var(--text-secondary); font-size: 11px; text-align: center; padding: 8px 0;"></div>
+                <button class="btn btn-primary btn-block" id="btn-export-gif">Export GIF</button>
+            </div>
+            <!-- CSS Panel -->
+            <div class="export-panel">
+                <p style="color: var(--text-secondary); font-size: 12px; margin-bottom: 12px;">Export the current frame as a CSS gradient for use as a static background.</p>
+                <button class="btn btn-primary btn-block" id="btn-export-css">Copy CSS to Clipboard</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== AUDIO MODAL ===== -->
+<div class="modal-overlay" id="audio-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title">Audio Reactivity</h2>
+            <button class="modal-close" onclick="Studio.UI.Modals.closeAll()">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <button class="btn btn-primary btn-block" id="btn-audio-toggle">Enable Microphone</button>
+
+            <div class="panel-section" style="margin-top: 16px;">
+                <div class="section-title"><span>Settings</span></div>
+                <div class="param-row">
+                    <label class="param-label">Sensitivity</label>
+                    <input type="range" class="slider" id="audio-sensitivity" min="0.1" max="5" step="0.1" value="1.5">
+                </div>
+                <div class="param-row">
+                    <label class="param-label">Smoothing</label>
+                    <input type="range" class="slider" id="audio-smoothing" min="0" max="0.99" step="0.01" value="0.8">
+                </div>
+            </div>
+
+            <div class="panel-section" style="margin-top: 16px;">
+                <div class="section-title"><span>Frequency Mapping</span></div>
+
+                <div class="audio-mapping-row" data-band="bass">
+                    <span class="mapping-label">Bass →</span>
+                    <select class="mapping-param select-input">
+                        <option value="none">None</option>
+                        <option value="scale" selected>Scale</option>
+                        <option value="warp">Warp</option>
+                        <option value="seed">Seed</option>
+                        <option value="grain">Grain</option>
+                        <option value="brightness">Brightness</option>
+                    </select>
+                    <input type="range" class="mapping-amount slider" min="0" max="5" step="0.1" value="2">
+                </div>
+
+                <div class="audio-mapping-row" data-band="mids">
+                    <span class="mapping-label">Mids →</span>
+                    <select class="mapping-param select-input">
+                        <option value="none">None</option>
+                        <option value="scale">Scale</option>
+                        <option value="warp" selected>Warp</option>
+                        <option value="seed">Seed</option>
+                        <option value="grain">Grain</option>
+                        <option value="brightness">Brightness</option>
+                    </select>
+                    <input type="range" class="mapping-amount slider" min="0" max="5" step="0.1" value="1">
+                </div>
+
+                <div class="audio-mapping-row" data-band="highs">
+                    <span class="mapping-label">Highs →</span>
+                    <select class="mapping-param select-input">
+                        <option value="none">None</option>
+                        <option value="scale">Scale</option>
+                        <option value="warp">Warp</option>
+                        <option value="seed">Seed</option>
+                        <option value="grain" selected>Grain</option>
+                        <option value="brightness">Brightness</option>
+                    </select>
+                    <input type="range" class="mapping-amount slider" min="0" max="5" step="0.1" value="1.5">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== KEYBOARD SHORTCUTS OVERLAY ===== -->
+<div class="shortcuts-overlay" id="shortcuts-overlay">
+    <div class="shortcuts-panel">
+        <div class="modal-header">
+            <h2 class="modal-title">Keyboard Shortcuts</h2>
+            <button class="modal-close" onclick="Studio.UI.Shortcuts.toggleHelp()">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div id="shortcuts-content" class="shortcuts-content"></div>
+    </div>
+</div>
+
+<!-- ===== SCRIPTS (load order matters) ===== -->
+<!-- Namespace (first) -->
+<script src="js/namespace.js"></script>
+
+<!-- Shaders -->
+<script src="js/shaders/common.js"></script>
+<script src="js/shaders/vertex.js"></script>
+<script src="js/shaders/patterns-classic.js"></script>
+<script src="js/shaders/patterns-extended.js"></script>
+<script src="js/shaders/blend-modes.js"></script>
+<script src="js/shaders/post-bloom.js"></script>
+<script src="js/shaders/post-composite.js"></script>
+<script src="js/shaders/post-extras.js"></script>
+
+<!-- Data -->
+<script src="js/data/palettes.js"></script>
+<script src="js/data/easing.js"></script>
+<script src="js/data/presets.js"></script>
+
+<!-- Core Engine -->
+<script src="js/core/gl-engine.js"></script>
+<script src="js/core/layer-compositor.js"></script>
+<script src="js/core/post-processing.js"></script>
+<script src="js/core/render-pipeline.js"></script>
+
+<!-- Systems -->
+<script src="js/systems/state.js"></script>
+<script src="js/systems/history.js"></script>
+<script src="js/systems/timeline-engine.js"></script>
+<script src="js/systems/audio.js"></script>
+<script src="js/systems/gif-encoder.js"></script>
+<script src="js/systems/export.js"></script>
+<script src="js/systems/project.js"></script>
+
+<!-- UI (order matters: dependencies first) -->
+<script src="js/ui/toasts.js"></script>
+<script src="js/ui/shortcuts.js"></script>
+<script src="js/ui/drag-drop.js"></script>
+<script src="js/ui/context-menu.js"></script>
+<script src="js/ui/toolbar.js"></script>
+<script src="js/ui/command-palette.js"></script>
+<script src="js/ui/pattern-browser.js"></script>
+<script src="js/ui/palette-editor.js"></script>
+<script src="js/ui/layer-panel.js"></script>
+<script src="js/ui/properties-panel.js"></script>
+<script src="js/ui/timeline-ui.js"></script>
+<script src="js/ui/modals.js"></script>
+<script src="js/ui/preset-browser.js"></script>
+
+<!-- App init (LAST) -->
+<script src="js/ui/app.js"></script>
+
+</body>
+</html>
