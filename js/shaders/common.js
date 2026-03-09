@@ -181,8 +181,8 @@ float compositionWeight(vec2 uv, vec2 focal) {
 float organicTime(float t, float rate, float breathe) {
     if (u_loopDuration > 0.0) {
         float p = t * 6.28318 / u_loopDuration;
-        return cos(p) * rate + sin(p * 0.7) * rate * 0.5
-             + sin(p * 3.0) * breathe + sin(p * 7.0) * breathe * 0.5;
+        return cos(p) * rate + sin(p * 2.0) * rate * 0.5
+             + sin(p * 3.0) * breathe + sin(p * 5.0) * breathe * 0.5;
     }
     return t * rate + sin(t * rate * 0.3) * breathe + sin(t * rate * 0.7) * breathe * 0.5;
 }
