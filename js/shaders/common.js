@@ -15,6 +15,8 @@ uniform float u_vignette;
 uniform vec3 u_colors[5];
 uniform int u_numColors;
 uniform vec2 u_focal;
+uniform float u_angle;
+uniform float u_loopDuration;
 
 float hash21(vec2 p) {
     vec3 p3 = fract(vec3(p.xyx) * 0.1031);
@@ -177,7 +179,19 @@ float compositionWeight(vec2 uv, vec2 focal) {
     return exp(-dot(d, d) * 2.5);
 }
 float organicTime(float t, float rate, float breathe) {
+    if (u_loopDuration > 0.0) {
+        float p = t * 6.28318 / u_loopDuration;
+        return cos(p) * rate + sin(p * 0.7) * rate * 0.5
+             + sin(p * 3.0) * breathe + sin(p * 7.0) * breathe * 0.5;
+    }
     return t * rate + sin(t * rate * 0.3) * breathe + sin(t * rate * 0.7) * breathe * 0.5;
+}
+vec2 rotateP(vec2 p, float asp) {
+    vec2 c = vec2(asp * 0.5, 0.5);
+    p -= c;
+    float ca = cos(u_angle), sa = sin(u_angle);
+    p = vec2(ca*p.x - sa*p.y, sa*p.x + ca*p.y);
+    return p + c;
 }
 
 vec3 acesTonemap(vec3 x) {

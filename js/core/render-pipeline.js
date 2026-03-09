@@ -38,6 +38,8 @@
             gl.uniform1f(eng.getUniform(prog, 'u_seed'), params.seed);
             gl.uniform1f(eng.getUniform(prog, 'u_scale'), params.scale);
             gl.uniform1f(eng.getUniform(prog, 'u_warp'), params.warp);
+            gl.uniform1f(eng.getUniform(prog, 'u_angle'), params.angle || 0);
+            gl.uniform1f(eng.getUniform(prog, 'u_loopDuration'), this._loopDuration || 0);
             gl.uniform1f(eng.getUniform(prog, 'u_grain'), params.grain || 0);
             gl.uniform2f(eng.getUniform(prog, 'u_focal'), 0.382, 0.45);
 
@@ -54,13 +56,14 @@
                 seed: layer.params.seed,
                 scale: layer.params.scale,
                 warp: layer.params.warp,
-                grain: layer.params.grain || 0
+                grain: layer.params.grain || 0,
+                angle: layer.params.angle || 0
             };
 
             // Apply timeline keyframes
             var te = Studio.Systems.TimelineEngine;
             if (te) {
-                var paramNames = ['seed', 'scale', 'warp', 'grain'];
+                var paramNames = ['seed', 'scale', 'warp', 'grain', 'angle'];
                 for (var i = 0; i < paramNames.length; i++) {
                     var val = te.evaluate(layer.id, paramNames[i], time);
                     if (val !== null) params[paramNames[i]] = val;

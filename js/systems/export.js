@@ -83,6 +83,7 @@
             var pipeline = Studio.Core.RenderPipeline;
             var encoder = Studio.Systems.GIFEncoder;
             pipeline.exporting = true;
+            pipeline._loopDuration = duration;
 
             var gifH = Math.round(width * 9 / 16);
             var frameCount = Math.round(fps * duration);
@@ -140,6 +141,7 @@
                     canvas.height = origH;
                     pipeline.render();
                     pipeline.exporting = false;
+                    pipeline._loopDuration = 0;
                     resolve();
                 }
 
