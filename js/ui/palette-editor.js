@@ -1,7 +1,7 @@
 (function() {
     "use strict";
 
-    var gridEl, customEl, categoryEl;
+    var gridEl, customEl, categoryEl, customBtn;
 
     Studio.UI.PaletteEditor = {
         init: function() {
@@ -9,11 +9,26 @@
             gridEl = document.getElementById('palette-grid');
             customEl = document.getElementById('custom-colors');
             categoryEl = document.getElementById('palette-categories');
+            customBtn = document.getElementById('btn-custom-palette');
 
             this.render();
 
             Studio.Events.on('state:layerSelected', function() { self.render(); });
             Studio.Events.on('state:layersChanged', function() { self.render(); });
+
+            // Custom palette button
+            if (customBtn) {
+                customBtn.addEventListener('click', function() {
+                    var layer = Studio.Systems.State.getSelectedLayer();
+                    if (!layer) return;
+                    // If not already custom, copy current palette colors to layer.colors
+                    if (!layer.colors) {
+                        var pal = Studio.Data.Palettes[layer.paletteIndex];
+                        layer.colors = pal ? pal.colors.slice() : ['#000000','#333333','#666666','#999999','#cccccc'];
+                    }
+                    Studio.Events.emit('state:layersChanged');
+                });
+            }
 
             // Custom color inputs
             if (customEl) {
@@ -79,6 +94,7 @@
             var palettes = Studio.Data.Palettes;
             var layer = Studio.Systems.State.getSelectedLayer();
             var activePalette = layer ? layer.paletteIndex : 0;
+            var isCustom = layer && layer.colors;
 
             var html = '';
             for (var i = 0; i < palettes.length; i++) {
@@ -89,10 +105,29 @@
                 }
                 gradient += ')';
 
-                html += '<div class="palette-swatch' + (i === activePalette ? ' active' : '') + '" data-index="' + i + '" style="background: ' + gradient + '">' +
+                html += '<div class="palette-swatch' + (!isCustom && i === activePalette ? ' active' : '') + '" data-index="' + i + '" style="background: ' + gradient + '">' +
                     '<span class="palette-name">' + p.name + '</span></div>';
             }
             gridEl.innerHTML = html;
+
+            // Update Custom button state and gradient
+            if (customBtn) {
+                customBtn.classList.toggle('active', !!isCustom);
+                if (isCustom) {
+                    var cGrad = 'linear-gradient(90deg';
+                    for (var ci = 0; ci < layer.colors.length; ci++) cGrad += ', ' + layer.colors[ci];
+                    cGrad += ')';
+                    customBtn.style.background = cGrad;
+                } else {
+                    var pal = Studio.Data.Palettes[activePalette];
+                    if (pal) {
+                        var pGrad = 'linear-gradient(90deg';
+                        for (var pi = 0; pi < pal.colors.length; pi++) pGrad += ', ' + pal.colors[pi];
+                        pGrad += ')';
+                        customBtn.style.background = pGrad;
+                    }
+                }
+            }
 
             // Bind clicks
             var swatches = gridEl.querySelectorAll('.palette-swatch');
@@ -115,11 +150,10 @@
             if (!customEl) return;
             var layer = Studio.Systems.State.getSelectedLayer();
             if (!layer) return;
+            var colors = layer.colors || (Studio.Data.Palettes[layer.paletteIndex] || {}).colors || [];
             var inputs = customEl.querySelectorAll('input[type="color"]');
             for (var i = 0; i < inputs.length; i++) {
-                if (layer.colors && layer.colors[i]) {
-                    inputs[i].value = layer.colors[i];
-                }
+                if (colors[i]) inputs[i].value = colors[i];
             }
         }
     };

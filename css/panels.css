@@ -211,7 +211,8 @@
     letter-spacing: 0.3px;
 }
 
-.custom-colors { display: flex; gap: 6px; margin-top: 8px; }
+.custom-colors { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.custom-palette-btn { flex: 0 0 100%; margin-bottom: 2px; }
 .custom-colors .color-input-wrap {
     flex: 1;
     display: flex;
