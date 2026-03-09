@@ -32,6 +32,7 @@
             var gc = Studio.Systems.State.hexToGL(postFx.grainColor || '#ffffff');
             gl.uniform3f(eng.getUniform(prog, 'u_grainColor'), gc[0], gc[1], gc[2]);
             gl.uniform1f(eng.getUniform(prog, 'u_sharpen'), 0);
+            gl.uniform1f(eng.getUniform(prog, 'u_loopDuration'), Studio.Core.RenderPipeline._loopDuration || 0);
             eng.drawQuad(prog);
         }
     };
