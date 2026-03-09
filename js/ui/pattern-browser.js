@@ -96,46 +96,59 @@
             this._generateThumbnails();
         },
 
+        _thumbFBO: null,
+
         _generateThumbnails: function() {
             var canvases = gridEl.querySelectorAll('.pat-preview');
-            for (var i = 0; i < canvases.length; i++) {
-                this._drawThumbnail(canvases[i], parseInt(canvases[i].dataset.pattern, 10));
+            if (!canvases.length) return;
+
+            var gl = Studio.gl;
+            var eng = Studio.Core.GLEngine;
+            var pipeline = Studio.Core.RenderPipeline;
+            if (!gl || !eng) return;
+
+            var tw = 192, th = 96;
+            if (!this._thumbFBO || this._thumbFBO.w !== tw || this._thumbFBO.h !== th) {
+                this._thumbFBO = eng.createFBO(tw, th, false);
             }
-        },
 
-        _drawThumbnail: function(canvas, patternIndex) {
-            // Simple gradient thumbnail based on pattern colors
-            var ctx = canvas.getContext('2d');
-            if (!ctx) return;
-            var w = canvas.width;
-            var h = canvas.height;
-
-            // Use palette colors to create a gradient preview
             var layer = Studio.Systems.State.getSelectedLayer();
-            var palIdx = layer ? layer.paletteIndex : 0;
-            var palette = Studio.Data.Palettes[palIdx];
-            if (!palette) return;
+            var colors = Studio.Systems.State.getColors(layer);
+            var pixels = new Uint8Array(tw * th * 4);
+            var defaultParams = { seed: 42, scale: 2.0, warp: 1.5, grain: 0, angle: 0 };
+            var savedLoop = pipeline._loopDuration;
+            pipeline._loopDuration = 0;
 
-            var grad = ctx.createLinearGradient(0, 0, w, h);
-            for (var i = 0; i < palette.colors.length; i++) {
-                grad.addColorStop(i / (palette.colors.length - 1), palette.colors[i]);
-            }
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, w, h);
+            for (var i = 0; i < canvases.length; i++) {
+                var canvas = canvases[i];
+                var idx = parseInt(canvas.dataset.pattern, 10);
+                var prog = eng.getPatternProgram(idx);
+                if (!prog) continue;
 
-            // Add some visual variation based on pattern index
-            ctx.globalAlpha = 0.3;
-            ctx.fillStyle = '#000';
-            var seed = patternIndex * 137;
-            for (var j = 0; j < 6; j++) {
-                var x = ((seed + j * 41) % w);
-                var y = ((seed + j * 67) % h);
-                var r = 5 + (seed + j * 23) % 15;
-                ctx.beginPath();
-                ctx.arc(x, y, r, 0, Math.PI * 2);
-                ctx.fill();
+                gl.bindFramebuffer(gl.FRAMEBUFFER, this._thumbFBO.fb);
+                gl.viewport(0, 0, tw, th);
+                pipeline.renderPattern(idx, defaultParams, colors, tw, th, 0.5);
+                gl.readPixels(0, 0, tw, th, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+                gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+                var ctx = canvas.getContext('2d');
+                if (!ctx) continue;
+                canvas.width = tw;
+                canvas.height = th;
+                var imgData = ctx.createImageData(tw, th);
+                // Flip vertically (GL reads bottom-up)
+                for (var row = 0; row < th; row++) {
+                    var srcOff = row * tw * 4;
+                    var dstOff = (th - 1 - row) * tw * 4;
+                    imgData.data.set(pixels.subarray(srcOff, srcOff + tw * 4), dstOff);
+                }
+                ctx.putImageData(imgData, 0, 0);
             }
-            ctx.globalAlpha = 1;
+
+            pipeline._loopDuration = savedLoop;
+            // Restore main viewport
+            var mainW = Studio.canvas.width, mainH = Studio.canvas.height;
+            gl.viewport(0, 0, mainW, mainH);
         },
 
         _updateActive: function() {
