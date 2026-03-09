@@ -30,7 +30,7 @@
                 durInput.value = Studio.Systems.State.timeline.duration;
                 durInput.addEventListener('change', function() {
                     var val = parseFloat(durInput.value);
-                    if (val >= 1 && val <= 60) {
+                    if (val >= 1 && val <= 10) {
                         Studio.Systems.State.timeline.duration = val;
                         Studio.Events.emit('state:timelineChanged');
                         self.render();

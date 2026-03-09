@@ -13,6 +13,7 @@
 
     var POSTFX_PARAMS = [
         { key: 'filmGrain', label: 'Film Grain', min: 0, max: 0.5, step: 0.01, default: 0.02 },
+        { key: 'grainColor', label: 'Grain Color', type: 'color', default: '#ffffff' },
         { key: 'sharpen', label: 'Sharpen', min: 0, max: 2, step: 0.01, default: 0 }
     ];
 

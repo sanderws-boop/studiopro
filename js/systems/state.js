@@ -23,7 +23,8 @@
 
         postFx: {
             filmGrain: 0.02,
-            sharpen: 0.0
+            sharpen: 0.0,
+            grainColor: '#ffffff'
         },
 
         timeline: {

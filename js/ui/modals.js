@@ -71,24 +71,6 @@
                 });
             }
 
-            // WebM export
-            var webmBtn = exportModal.querySelector('#btn-export-webm');
-            var webmDur = exportModal.querySelector('#webm-duration');
-            var webmFps = exportModal.querySelector('#webm-fps');
-            // Sync WebM duration with timeline duration
-            if (webmDur) {
-                webmDur.value = Studio.Systems.State.timeline.duration;
-            }
-            if (webmBtn) {
-                webmBtn.addEventListener('click', function() {
-                    var dur = webmDur ? parseInt(webmDur.value, 10) : 5;
-                    var fps = webmFps ? parseInt(webmFps.value, 10) : 30;
-                    Studio.UI.Toasts.show('Recording ' + dur + 's WebM at ' + fps + 'fps...', 'info');
-                    Studio.Systems.Export.exportWebM(dur, fps);
-                    self.closeAll();
-                });
-            }
-
             // GIF export
             var gifBtn = exportModal.querySelector('#btn-export-gif');
             var gifDur = exportModal.querySelector('#gif-duration');
@@ -131,14 +113,6 @@
                 updateEstimate();
             }
 
-            // CSS export
-            var cssBtn = exportModal.querySelector('#btn-export-css');
-            if (cssBtn) {
-                cssBtn.addEventListener('click', function() {
-                    Studio.Systems.Export.exportCSS();
-                    self.closeAll();
-                });
-            }
         }
     };
 })();
