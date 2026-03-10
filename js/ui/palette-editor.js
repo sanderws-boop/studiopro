@@ -46,41 +46,44 @@
         var h = hsl[0], s = hsl[1];
         mode = mode || 'balanced';
         if (mode === 'vivid') {
-            // High contrast — bold extremes
+            // Rich tonal extremes — push saturation, dramatic range within same hue
+            var sv = Math.min(s * 1.2, 100);
             if (isDark) {
                 return [
-                    hslToHex(h, s*0.2, 3),
-                    hslToHex(h, s*0.8, 18),
+                    hslToHex(h, s*0.1, 3),
+                    hslToHex(h, sv, 18),
                     hex,
-                    hslToHex(h, s*0.7, 68),
-                    hslToHex(h, s*0.15, 95)
+                    hslToHex(h, sv, 65),
+                    hslToHex(h, s*0.2, 95)
                 ];
             } else {
                 return [
-                    hslToHex(h, s*0.1, 98),
-                    hslToHex(h, s*0.5, 85),
+                    hslToHex(h, s*0.08, 98),
+                    hslToHex(h, sv, 80),
                     hex,
-                    hslToHex(h, s*0.85, 25),
-                    hslToHex(h, s*0.6, 8)
+                    hslToHex(h, sv, 20),
+                    hslToHex(h, s*0.15, 5)
                 ];
             }
         } else if (mode === 'tonal') {
-            // Subtle — stays close to original color
+            // Harmonious hue shifts — refined contrast through neighboring colors
+            var hw = (h + 20 + 360) % 360;
+            var hc = (h - 25 + 360) % 360;
             if (isDark) {
                 return [
-                    hslToHex(h, s*0.5, 14),
-                    hslToHex(h, s*0.7, 28),
+                    hslToHex(hw, s*0.35, 8),
+                    hslToHex(hc, s*0.6, 22),
                     hex,
-                    hslToHex(h, s*0.6, 58),
-                    hslToHex(h, s*0.45, 72)
+                    hslToHex(hw, s*0.55, 62),
+                    hslToHex(hc, s*0.3, 82)
                 ];
             } else {
                 return [
-                    hslToHex(h, s*0.25, 92),
-                    hslToHex(h, s*0.45, 78),
+                    hslToHex(hc, s*0.2, 95),
+                    hslToHex(hw, s*0.45, 78),
                     hex,
-                    hslToHex(h, s*0.55, 42),
-                    hslToHex(h, s*0.45, 30)
+                    hslToHex(hc, s*0.55, 38),
+                    hslToHex(hw, s*0.4, 18)
                 ];
             }
         } else {

@@ -199,9 +199,11 @@
                 { value: 4, label: 'Bottom' }
             ];
             var ratios = [
-                { value: 0.25, label: '25%' },
-                { value: 0.5, label: '50%' },
-                { value: 0.75, label: '75%' }
+                { value: 0.333, label: '1:2' },
+                { value: 0.382, label: 'φ' },
+                { value: 0.5, label: '1:1' },
+                { value: 0.618, label: '1:φ' },
+                { value: 0.667, label: '2:1' }
             ];
 
             var html = '<div class="param-row"><label class="param-label">Side</label>';
