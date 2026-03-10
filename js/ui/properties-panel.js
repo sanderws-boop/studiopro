@@ -50,6 +50,13 @@
             }
             html += '</div>';
 
+            // Split Layout
+            html += '<div class="panel-section"><div class="section-title">Split Layout</div>';
+            if (layer) {
+                html += this._buildSplitControls(layer);
+            }
+            html += '</div>';
+
             // Post-processing
             html += '<div class="panel-section"><div class="section-title">Post-Processing</div>';
             var postFx = Studio.Systems.State.postFx;
@@ -66,6 +73,7 @@
 
             containerEl.innerHTML = html;
             this._bindSliders();
+            this._bindSplitControls();
         },
 
         _buildSlider: function(param, value, group) {
@@ -176,6 +184,75 @@
                 Studio.Systems.State.updateLayerParam(li, key, val);
             } else if (group === 'postfx') {
                 Studio.Systems.State.updatePostFx(key, val);
+            }
+        },
+
+        _buildSplitControls: function(layer) {
+            var side = (layer.params.splitSide) ? Math.round(layer.params.splitSide) : 0;
+            var ratio = layer.params.splitRatio || 0.5;
+
+            var sides = [
+                { value: 0, label: 'None' },
+                { value: 1, label: 'Left' },
+                { value: 2, label: 'Right' },
+                { value: 3, label: 'Top' },
+                { value: 4, label: 'Bottom' }
+            ];
+            var ratios = [
+                { value: 0.25, label: '25%' },
+                { value: 0.5, label: '50%' },
+                { value: 0.75, label: '75%' }
+            ];
+
+            var html = '<div class="param-row"><label class="param-label">Side</label>';
+            html += '<div class="split-toggle">';
+            for (var i = 0; i < sides.length; i++) {
+                html += '<button class="split-btn' + (side === sides[i].value ? ' active' : '') +
+                    '" data-split-side="' + sides[i].value + '">' + sides[i].label + '</button>';
+            }
+            html += '</div></div>';
+
+            if (side > 0) {
+                html += '<div class="param-row"><label class="param-label">Ratio</label>';
+                html += '<div class="split-toggle">';
+                for (var j = 0; j < ratios.length; j++) {
+                    html += '<button class="split-btn' + (Math.abs(ratio - ratios[j].value) < 0.01 ? ' active' : '') +
+                        '" data-split-ratio="' + ratios[j].value + '">' + ratios[j].label + '</button>';
+                }
+                html += '</div></div>';
+            }
+
+            return html;
+        },
+
+        _bindSplitControls: function() {
+            if (!containerEl) return;
+            var self = this;
+
+            var sideBtns = containerEl.querySelectorAll('[data-split-side]');
+            for (var i = 0; i < sideBtns.length; i++) {
+                (function(btn) {
+                    btn.addEventListener('click', function() {
+                        var val = parseInt(btn.dataset.splitSide, 10);
+                        var li = Studio.Systems.State.selectedLayerIndex;
+                        Studio.Systems.State.updateLayerParam(li, 'splitSide', val);
+                        Studio.Systems.History.push();
+                        self.render();
+                    });
+                })(sideBtns[i]);
+            }
+
+            var ratioBtns = containerEl.querySelectorAll('[data-split-ratio]');
+            for (var j = 0; j < ratioBtns.length; j++) {
+                (function(btn) {
+                    btn.addEventListener('click', function() {
+                        var val = parseFloat(btn.dataset.splitRatio);
+                        var li = Studio.Systems.State.selectedLayerIndex;
+                        Studio.Systems.State.updateLayerParam(li, 'splitRatio', val);
+                        Studio.Systems.History.push();
+                        self.render();
+                    });
+                })(ratioBtns[j]);
             }
         },
 

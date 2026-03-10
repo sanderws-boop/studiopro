@@ -461,6 +461,21 @@ input[type="range"]::-moz-range-thumb {
 .auto-theme-btn:hover { color: var(--text-secondary); }
 .auto-theme-btn.active { background: var(--bg-hover); color: var(--text-primary); }
 
+/* Split layout toggle */
+.split-toggle {
+    display: flex; gap: 2px; background: var(--bg-primary);
+    border-radius: var(--radius-sm); padding: 2px; flex: 1;
+}
+.split-btn {
+    flex: 1; padding: 5px 4px; font-size: 10px; font-weight: 600;
+    text-align: center; cursor: pointer; border: none;
+    background: transparent; color: var(--text-tertiary);
+    border-radius: var(--radius-xs); transition: all var(--dur-fast);
+    font-family: var(--font); white-space: nowrap;
+}
+.split-btn:hover { color: var(--text-secondary); }
+.split-btn.active { background: var(--bg-hover); color: var(--text-primary); }
+
 /* Layer item placeholder for drag */
 .layer-item-placeholder {
     background: var(--accent-dim); border: 1px dashed var(--accent);

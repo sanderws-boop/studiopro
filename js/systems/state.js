@@ -13,7 +13,7 @@
             visible: true,
             patternIndex: patternIndex || 0,
             paletteIndex: paletteIndex !== undefined ? paletteIndex : 0,
-            params: { seed: +(Math.random() * 100).toFixed(1), scale: 2.0, warp: 1.5, angle: 0 }
+            params: { seed: +(Math.random() * 100).toFixed(1), scale: 2.0, warp: 1.5, angle: 0, splitSide: 0, splitRatio: 0.5 }
         };
     }
 
