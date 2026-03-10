@@ -231,6 +231,13 @@ void outputColorRaw(float f, vec2 uv) {
     vec3 col = paletteColor(f);
     fragColor = vec4(col, 1.0);
 }
+
+// Direct RGB output for layer FBO — bypasses palette mapping, expects linear RGB input
+void outputColorDirect(vec3 col, vec2 uv) {
+    float cw = compositionWeight(uv, u_focal);
+    col *= (0.3 + 0.7 * cw);
+    fragColor = vec4(col, 1.0);
+}
 `;
 
 })();

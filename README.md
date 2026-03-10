@@ -6,7 +6,7 @@ A professional generative background engine built entirely with vanilla HTML, CS
 
 ## Features
 
-- **6 generative patterns** — Aurora, Plasma, Soft Orbs, Silk Waves, Spectral Haze, Gradient Mesh
+- **7 generative patterns** — Aurora, Plasma, Soft Orbs, Silk Waves, Spectral Haze, Gradient Mesh, Color Mesh
 - **Color palettes** — Obsidian preset, custom 5-color editing, and Auto Palette with 3 modes (Balanced, Vivid, Tonal)
 - **Dark / Light theme** — Universal toggle that controls palette rendering and split color across all palette modes
 - **Split Layout** — Solid color area alongside the pattern for presentations (left/right/top/bottom, Fibonacci presets 5–8–13–21–34% + custom slider with drop shadow)
