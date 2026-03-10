@@ -2,6 +2,8 @@
     "use strict";
 
     var layerFBO = null;
+    var blurFBO_A = null;
+    var blurFBO_B = null;
 
     Studio.Core.PostProcessing = {
         init: function() {},
@@ -10,8 +12,58 @@
             layerFBO = Studio.Core.GLEngine.resizeFBO(layerFBO, w, h, true);
         },
 
+        ensureBlurFBOs: function(gl, w, h) {
+            blurFBO_A = Studio.Core.GLEngine.resizeFBO(blurFBO_A, w, h, true);
+            blurFBO_B = Studio.Core.GLEngine.resizeFBO(blurFBO_B, w, h, true);
+        },
+
         getLayerFBO: function() {
             return layerFBO;
+        },
+
+        applyBlur: function(gl, srcFBO, w, h, passes) {
+            if (!passes || passes < 1) return srcFBO;
+            var eng = Studio.Core.GLEngine;
+            var prog = eng._blurProg;
+            if (!prog) return srcFBO;
+
+            this.ensureBlurFBOs(gl, w, h);
+
+            var texelX = 1.0 / w;
+            var texelY = 1.0 / h;
+            var pingPong = [blurFBO_A, blurFBO_B];
+            var readTex = srcFBO.tex;
+            var writeIdx = 0;
+
+            gl.useProgram(prog);
+            gl.uniform1i(eng.getUniform(prog, 'u_src'), 0);
+
+            for (var i = 0; i < passes; i++) {
+                var step = Math.pow(2, i);
+
+                // Horizontal pass
+                gl.bindFramebuffer(gl.FRAMEBUFFER, pingPong[writeIdx].fb);
+                gl.viewport(0, 0, w, h);
+                eng.bindTexture(0, readTex);
+                gl.uniform2f(eng.getUniform(prog, 'u_direction'), texelX, 0.0);
+                gl.uniform1f(eng.getUniform(prog, 'u_step'), step);
+                eng.drawQuad(prog);
+                readTex = pingPong[writeIdx].tex;
+                writeIdx = 1 - writeIdx;
+
+                // Vertical pass
+                gl.bindFramebuffer(gl.FRAMEBUFFER, pingPong[writeIdx].fb);
+                gl.viewport(0, 0, w, h);
+                eng.bindTexture(0, readTex);
+                gl.uniform2f(eng.getUniform(prog, 'u_direction'), 0.0, texelY);
+                gl.uniform1f(eng.getUniform(prog, 'u_step'), step);
+                eng.drawQuad(prog);
+                readTex = pingPong[writeIdx].tex;
+                writeIdx = 1 - writeIdx;
+            }
+
+            // Return the FBO that was last written to
+            return pingPong[1 - writeIdx];
         },
 
         applyComposite: function(gl, srcFBO, w, h, time) {

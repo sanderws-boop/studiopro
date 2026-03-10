@@ -97,6 +97,13 @@
             var colors = state.getColors(layer);
             this.renderPattern(layer.patternIndex, params, colors, w, h, time);
 
+            // Apply per-pattern blur if defined
+            var patternDef = eng.getAllPatterns()[layer.patternIndex];
+            var blurPasses = (patternDef && patternDef.blurPasses) || 0;
+            if (blurPasses > 0) {
+                fbo = Studio.Core.PostProcessing.applyBlur(gl, fbo, w, h, blurPasses);
+            }
+
             // Final composite to screen
             Studio.Core.PostProcessing.applyComposite(gl, fbo, w, h, time);
         },

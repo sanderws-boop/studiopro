@@ -125,6 +125,9 @@
             // Copy program
             this._copyProg = this.buildProgram(Studio.Shaders.Vertex, Studio.Shaders.PostExtras.copy);
 
+            // Blur program (separable Gaussian)
+            this._blurProg = this.buildProgram(Studio.Shaders.Vertex, Studio.Shaders.PostExtras.blur);
+
             var compiled = this._patternPrograms.filter(function(p) { return p !== null; }).length;
             console.log('Backdrop: compiled ' + compiled + '/' + allPatterns.length + ' patterns');
         },
